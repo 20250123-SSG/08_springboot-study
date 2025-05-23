@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+  <meta charset="UTF-8">
+  <title>expression</title>
+</head>
+<body>
+  <h2>expression</h2>
+
+  <!--1. Value Expression-->
+
+  <div>
+    <div th:text="${name}"></div>
+
+    <!--다른문자열과 함께-->
+    <div th:text="'이름: ' + ${name}"></div>
+    <div th:text="|이름: ${name}|"></div>
+
+    <!-- html태그가 문자에 포함 되어 있을 경우 -->
+    <div th:text="${age}"></div>
+    <div th:utext="${age}"></div>
+  </div>
+
+  <hr>
+
+  <!-- 특정 dto의 필드값 출력1 -->
+    <div th:text="${user.no}"></div>
+    <div th:text="${user.name}"></div>
+    <div th:text="${user.age}"></div>
+    <div th:text="${user.registDate}"></div>
+  <br>
+  <!-- 필드값 출력2 (IDE 버그로 빨간줄 표시) -->
+  <th:block th:object="${user}">
+    <div th:text="*{no}"></div>
+    <div th:text="*{name}"></div>
+    <div th:text="*{age}"></div>
+    <div th:text="*{registDate}"></div>
+  </th:block>
+
+  <hr>
+
+
+  <!-- 특정 Map의 value 값 출력 -->
+  <div th:text="${forecast.weather}"></div>
+  <div th:text="${forecast.temperature}"></div>
+  <br>
+  <th:block th:object="${forecast}">
+    <div th:text="*{weather}"></div>
+    <div th:text="*{temperature}"></div>
+  </th:block>
+
+  <hr>
+
+  <!--텍스트상자 요소의 value 출력-->
+  <form th:object="${user}">
+    <input type="number" th:value="*{no}"> <br>
+    <input type="text" th:field="*{name}"> <!--추가적으로 id, name 필드값도 만들어줌--> <br>
+    <textarea th:text="*{age}"></textarea> <br>
+    <input type="text" th:field="*{registDate}"> <br>
+    <!--날짜 포맷에 맞춰서 자동 기입-->
+    <input type="datetime-local" th:value="*{#temporals.format(registDate, 'yyyy-MM-dd HH:mm:ss')}"> <br>
+    <input type="date" th:value="*{#temporals.format(registDate, 'yyyy-MM-dd')}">
+  </form>
+
+  <hr>
+
+  인사말 : <span th:text="#{greeting}"></span>
+
+  <hr>
+
+  <p th:fragment="side">side</p> <!--조각만들기(expression::side)-->
+
+  <div th:replace="~{expression::side}">대체</div>
+  <div th:insert="~{expression::side}">삽입</div>
+
+  <div th:replace="~{nav::menu}"></div>
+
+</body>
+</html>
