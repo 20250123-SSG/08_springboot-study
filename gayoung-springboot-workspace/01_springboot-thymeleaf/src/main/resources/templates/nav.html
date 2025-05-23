@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <ul th:fragment="menu"> <!--nav::menu-->
+    <li><a th:href="@{/}">메인페이지</a></li>
+    <li><a th:href="@{/expression}">타임리프 주요 표현식</a></li>
+    <li><a th:href="@{/javascript}">타임리프 javascript에서의 활용</a></li>
+    <li><a th:href="@{/utility}">타임리프 유틸리티 객체 활용</a></li>
+    <li><a th:href="@{/control}">타임리프 제어문</a></li>
+
+
+  </ul>
+</body>
+</html>

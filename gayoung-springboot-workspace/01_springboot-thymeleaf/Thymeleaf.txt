@@ -1,0 +1,152 @@
+## 타임리프 ##
+1. Thymeleaf
+2. Spring Boot에서 채택된 표준 View Template Engine
+    → Spring Boot에서는 기본적으로 JSP를 지원하지 않음 (하려면 별도의 세팅이 필요함)
+3. 서버에서 클라이언트에게 응답할 화면을 만드는 역할 수행
+4. 기존의 HTML 코드와 구조를 그대로 사용하는 Natural Templates 방식 사용
+    → JSP와 달리 html 확장자를 갖고 있어 JSP처럼 Servlet이 문서를 표현하는 방식이 아니기 때문에 서버 없이도 동작 가능
+    → WAS를 통하지 않고도 파일을 웹 브라우저를 통해 열 수 있어 퍼블리셔와 협업이 용이
+5. HTML 문서내에 th 속성 사용을 위한 네임스페이스 추가
+   <html xmlns:th="http://www.thymeleaf.org>
+6. 단점
+   1) jsp태그 라이브러리와 custom태그들을 사용할 수 없어 기존 JSP코드를 재사용할 수 없음
+   2) 기존 태그를 유지하고 속성으로 템플릿 구문을 넣는데 있어 어느정도 한계가 있고 자바스크립트나 jQuery의 도움이 필요할 수 있음
+
+
+
+## 타임리프 주요 표현식 ##
+1. Link URL Expression
+   1) 경로 작성시 사용
+   2) 형식 : @{}
+   3) 예시
+       → <img th:src="@{/경로}">
+       → <a th:href="@{/경로}">
+       → <form th:action="@{/경로}">
+
+2. Value Expression
+   1) 값을 나타낼때 사용
+   2) 형식 : ${}
+   3) 영역 구분
+       → Model, RedirectAttributes : ${값}
+       → 요청 파라미터 값          : ${param.값}
+       → 세션에 저장된 값          : ${session.값}
+       → 애플리케이션에 저장된 값  : ${application.값}
+   4) th 속성
+       → th:text="${텍스트}"
+       → th:utext="${HTML요소}"
+
+3. Selection Variable Expression
+   1) 객체와 필드를 구분해서 작성할 때 사용합니다.
+   2) 형식
+      <form th:object="${객체}">
+        <input th:field="*{필드}">
+        <textarea th:text="*{필드}">
+      </form>
+
+4. Fragment Expression
+   1) 조각 만들기
+       → <태그 th:fragment="조각명"></태그>
+       → <태그 th:fragment="조각명(매개변수)"></태그>
+   2) 조각으로 바꾸기
+       → <태그 th:replace="~{파일명::조각명}"></태그>
+       → <태그 th:replace="~{파일명::조각명(인자)}"></태그>
+   3) 조각을 넣기
+       → <태그 th:insert="~{파일명::조각명}"></태그>
+       → <태그 th:insert="~{파일명::조각명(인자)}"></태그>
+
+5. Message Expression
+   1) MessageConfig.java에서 MessageSource 빈을 등록
+   2) 클래스패스에 messages.properties 파일을 생성
+   3) 임의의 프로퍼티를 작성하고 해당 프로퍼티 내용을 #{프로퍼티} 방식으로 확인
+
+
+
+## 타임리프 주요 유틸리티 객체 ##
+1. #list
+   1) 리스트를 의미합니다.
+   2) 주요 사용법
+       → ${#lists.size(list)}              : 요소의 개수 반환
+       → ${#lists.isEmpty(list)}           : 요소가 없으면 true 반환
+       → ${#lists.contains(list, element)} : element 가 있으면 true 반환
+
+2. #arrays
+   1) 배열을 의미합니다.
+   2) 주요 사용법
+       → ${#arrays.length(array)}            : 요소의 개수 반환
+       → ${#arrays.isEmpty(array)}           : 요소가 없으면 true 반환
+       → ${#arrays.contains(array, element)} : element 가 있으면 true 반환
+
+3. #temporals
+   1) 자바 8 이후 Temporal 타입의 날짜 및 시간(java.time 패키지)를 의미
+   2) 관련 타입을 가진 데이터의 형식을 변환할 수 있음
+   3) 원하는 단위의 값을 추출할 수 있음
+   4) 주요 사용법
+       → ${#temporals.format(date, 'pattern')} : pattern 지정된 date 반환
+       → ${#temporals.year(date)}              : 년도 반환
+       → ${#temporals.month(date)}             : 월 반환(1~12)
+       → ${#temporals.day(date)}               : 일 반환(1~31)
+       → ${#temporals.hour(date)}              : 시 반환(0~23)
+       → ${#temporals.minute(date)}            : 분 반환(0~59)
+       → ${#temporals.second(date)}            : 초 반환(0~59)
+
+4. #strings
+   1) java.lang.String 을 의미합니다.
+   2) 주요 사용법
+       → ${#strings.toString(obj)}               : obj를 문자열로 반환
+       → ${#strings.isEmpty(text)}               : text가 빈 문자열 또는 null이면 true 반환
+       → ${#strings.length(text)}}               : text의 길이 반환
+       → ${#strings.defaultString(text,default)} : text가 빈 문자열 또는 null이면 default 반환
+       → ${#strings.contains(text,substr)}       : text가 substr을 포함하면 true 반환
+       → ${#strings.startsWith(text,substr)}     : text가 substr으로 시작하면 true 반환
+       → ${#strings.endsWith(text,substr)}       : text가 substr으로 끝나면 true 반환
+       → ${#strings.indexOf(text,substr)}        : text에 포함된 substr의 인덱스 반환
+       → ${#strings.substring(text,begin,end)}   : text의 인덱스 begin부터 end 이전까지 문자열 반환
+       → ${#strings.replace(text,old,new)}       : text의 old를 new로 변경한 결과 반환
+       → ${#strings.toUpperCase(text)}           : text를 모두 대문자로 변경한 결과 반환
+       → ${#strings.toLowerCase(text)}           : text를 모두 소문자로 변경한 결과 반환
+       → ${#strings.trim(text)}                  : text의 좌우 공백 제거 결과 반환
+       → ${#strings.abbreviate(text,n)}          : text를 최대 n 만큼만 표시하고 ... 붙인 결과 반환
+       → ${#strings.arrayJoin(array,text)}       : array의 각 요소 사이에 text를 넣어 연결한 문자열 반환
+
+5. #numbers
+   1) 숫자를 다룹니다.
+   2) 천 단위 구분기호(thousands separator) : 'POINT', 'COMMA', 'WHITESPACE', 'NONE'
+   3) 주요 사용법
+       → ${#numbers.formatInteger(num,n)}                           : 정수 num을 최소 n 자리로 표시. 부족한 자리는 0을 표시
+       → ${#numbers.formatInteger(num,n,'COMMA')}                   : 정수 num을 최소 n 자리로 표시. 천 단위 구분기호로 콤마(,) 사용
+       → ${#numbers.formatDecimal(num,int,decimal)}                 : 실수 num의 정수부를 최소 int 자리로 표시. 소수부를 최소 decimal 자리로 표시
+       → ${#numbers.formatDecimal(num,int,decimal,'POINT')}         : 실수 num의 정수부를 최소 int 자리로 표시. 소수부를 최소 decimal 자리로 표시. 정수/소수 구분기호로 포인트(.) 사용
+       → ${#numbers.formatDecimal(num,int,'COMMA',decimal,'POINT')} : 실수 num의 정수부를 최소 int 자리로 표시. 소수부를 최소 decimal 자리로 표시. 천 단위 구분기호로 콤마(,) 사용. 정수/소수 구분기호로 포인트(.) 사용
+       → ${#numbers.sequence(from,to)}                              : from ~ to 사이 모든 정수 값을 가지는 시퀀스(배열) 반환
+       → ${#numbers.sequence(from,to,step)}                         : from ~ to 사이 step 간격의 정수 값을 가지는 시퀀스(배열) 반환
+
+
+
+## 타임리프 주요 제어문 ##
+1. 분기문
+   1) if 형식
+       → <태그 th:if="${조건식}"></태그>
+   2) else 형식
+       → <태그 th:if="${!조건식}"></태그>
+       → <태그 th:unless="${조건식}"></태그>
+
+2. 반복문
+   1) 배열 또는 리스트를 순회할 수 있습니다.
+   2) 형식
+       → <태그 th:each="변수:${배열/리스트}">
+           ${변수}
+         </태그>
+       → <태그 th:each="변수,rowStat:${배열/리스트}">
+           ${변수}, ${rowStat.index}, ${rowStat.count}
+         </태그>
+
+
+
+
+
+
+
+
+
+
+

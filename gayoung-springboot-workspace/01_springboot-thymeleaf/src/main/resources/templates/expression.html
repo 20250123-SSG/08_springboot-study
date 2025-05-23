@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <h2>expression</h2>
+
+  <div>
+      <div th:text="${name}"></div>
+
+      <!--다른 문자열과 함께-->
+      <div th:text="'이름: ' + ${name}"></div>
+      <div th:text="|이름: ${name}|"></div>  <!-- */이게 더 나음/*-->
+
+      <!--어트리뷰트값에 html태그가 포함되어있을 경우-->
+      <div th:text="${age}"></div>
+      <div th:utext="${age}"></div>
+
+      <hr>
+
+      <!--특정 dto의 필드값 출력1 -->
+      <div th:text="${user.no}"></div>
+      <div th:text="${user.name}"></div>
+      <div th:text="${user.age}"></div>
+      <div th:text="${user.registDate}"></div>
+
+      <!--특정 dto의 필드값 출력2 -->
+      <th:block th:object="${user}">
+          <div th:text="*{no}"></div>
+          <div th:text="*{name}"></div>
+          <div th:text="*{age}"></div>
+          <div th:text="*{registDate}"></div>
+      </th:block>
+
+      <!-- 특정 map의 value값 출력1 -->
+      <div th:text="${forecast.weather}"></div>
+      <div th:text="${forecast.temperature}"></div>
+
+      <!-- 특정 map의 value값 출력2 -->
+      <th:block th:object="${forecast}">
+          <div th:text="*{weather}"></div>
+          <div th:text="*{temperature}"></div>
+      </th:block>
+
+      <hr>
+
+      <!--텍스트상자 요소의 value 출력-->
+      <form th:object="${user}">
+          <input type="number" th:value="*{no}"> <br>
+          <input type="text" th:field="*{name}"> <br>. <!-- id(필드명 들어감), name(필드명 들어감), value 속성 함께 출력됨-->
+          <textarea th:text="*{age}"></textarea> <br>
+          <input type="text" th:field="*{registDate}">
+
+      </form>
+
+      <p th:fragment="side">side</p> <!--조각만들기 / expression::side /(다른페이지에서도 사용가능하다고 함)-->
+
+      <hr>
+
+      인사말 : <span th:text="#{greeting}"></span>
+
+      <hr>
+
+      <div th:replace="~{expression::side}">대체</div>
+      <div th:insert="~{expression::side}">삽입</div>
+
+      <div th:replace="~{nav::menu}"></div>
+
+  </div>
+</body>
+</html>

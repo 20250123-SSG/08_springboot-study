@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <!-- HTML 주선 (브라우저에 노출) -->
+    <!--/* 타임리프 주석 (브라우저에 노출X) */-->
+    <h2>메인페이지</h2>
+
+<!--    <a th:href="@{/expression}">타임리프 주요 표현식</a>-->
+    <!--/@ 서버 재시작 하지 않아도 변경시 바로 브라우저에서 확인가능 */-->
+
+    <div th:replace="~{nav::menu}"></div>
+</body>
+</html>
