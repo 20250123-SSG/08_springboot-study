@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<h2>thymeleaf utitlity object</h2>
+<div th:text="${#strings.length(title)}"></div>
+<div th:text="${#strings.isEmpty(content)}"></div>
+<div th:text="${#strings.defaultString(content, 'hello world')}"></div>
+
+<hr>
+
+<div th:text="${#numbers.formatDecimal(20.212412412, 3, 3)}"></div>
+<div th:text="${#numbers.formatInteger(stock, 4, 'COMMA')}"></div>
+<div th:text="${#numbers.formatDecimal(stock, 4,'COMMA', 2, 'POINT')}"></div>
+<div th:text="${#numbers.sequence(1, 10)}"></div>
+<div th:text="${#arrays.length(#numbers.sequence(1, 10))}"></div>
+
+<div th:text="${#temporals.format(now, 'yyyy, MM, dd, HH,mm,ss')}"></div>
+
+<div th:replace="~{nav::menu}"></div>
+</body>
+</html>

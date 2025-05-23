@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<h2>expression</h2>
+<div>
+  <div th:text="'name: ' + ${name}"></div>
+  <div th:text="|이름: ${name}|"></div>
+  <div th:utext="|age: ${age}|"></div>
+  <div th:text="${user.toString()}"></div>
+  <form th:object="${user}">
+    <input type="text" th:field="*{no}">
+    <input type="text" th:field="*{name}">
+    <textarea th:text="*{registDate}"></textarea>
+  </form>
+
+  <th:block th:object="${user}">
+    <div th:text="*{no}"></div>
+    <div th:text="*{name}"></div>
+    <div th:text="*{registDate}"></div>
+  </th:block>
+
+  <!-- Map value print -->
+
+  <div th:text="${forecast.weather}"></div>
+  <div th:text="${forecast.temp}"></div>
+  <th:block th:object="${forecast}">
+    <div th:text="*{weather}"></div>
+    <div th:text="*{temp}"></div>
+  </th:block>
+
+
+  <p th:fragment="side">side</p>
+
+  <div th:replace="~{expression::side}">replace</div>
+  <div th:insert="~{expression::side}">insert</div>
+  <div th:include="~{expression::side}">include</div>
+  <div th:replace="~{nav::menu}"></div>
+
+  인사말 : <span th:text="#{greeting}"> </span>
+
+</div>
+</body>
+</html>

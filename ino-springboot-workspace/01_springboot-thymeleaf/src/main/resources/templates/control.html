@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<h2>control</h2>
+<div>
+  <div th:if="${score} >= 60">pass</div>
+  <span th:unless="${score} >= 60">not passed</span>
+</div>
+<div>
+  <span th:if="${score} > 90">A</span>
+  <span th:if="${score} > 80">B</span>
+  <span th:if="${score} > 70">C</span>
+  <span th:if="${score} > 60">D</span>
+</div>
+
+
+<div th:switch="${grade}">
+  <span th:case="a">A</span>
+  <span th:case="b">B</span>
+  <span th:case="c">C</span>
+  <span th:case="d">D</span>
+  <span th:case="*">F</span>
+</div>
+
+<th:block th:each="item:${#numbers.sequence(1,5)}">
+  <span th:text="${item}"></span>
+</th:block>
+<br>
+<th:block th:each="user :${list}">
+  <span th:text="${user.no}"></span>
+</th:block>
+
+<table border="1">
+  <thead>
+  <tr>
+    <td>no</td>
+    <td>name</td>
+    <td>age</td>
+    <td>date</td>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:if="${#lists.isEmpty(list)}">
+    <td colspan="4">no member</td>
+  </tr>
+<!--  <th:block th:unless="${#lists.isEmpty(list)}">-->
+<!--    <tr th:each="user:${list}">-->
+<!--      <td th:text="${user.no}"></td>-->
+<!--      <td th:text="${user.name}"></td>-->
+<!--      <td th:text="${user.age}"></td>-->
+<!--      <td th:text="${user.registDate}"></td>-->
+<!--    </tr>-->
+<!--  </th:block>-->
+  <th:block th:unless="${#lists.isEmpty(list)}">
+    <tr th:each="user:${list}" th:object="${user}">
+      <td th:text="*{no}"></td>
+      <td th:text="*{name}"></td>
+      <td th:text="*{age}"></td>
+      <td th:text="*{#temporals.format(registDate, 'yy-MM-dd')}"></td>
+    </tr>
+  </th:block>
+  </tbody>
+</table>
+</body>
+</html>
