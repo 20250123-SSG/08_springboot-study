@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <h2>타임리프의 utility 객체 활용</h2>
+
+  <!--#strings-->
+  <div th:text="${#strings.length(title)}"></div>
+  <div th:text="${#strings.isEmpty(content)}"></div>
+  <div th:text="${#strings.defaultString(content,'base content')}"></div>
+  <div th:text="${#strings.abbreviate(title,10)}"></div>
+
+  <hr>
+
+  <!--#number-->
+  <div th:text="${#numbers.formatInteger(stock, 4)}"></div>
+  <div th:text="${#numbers.formatInteger(stock, 4, 'COMMA')}"></div>
+
+  <div th:text="${#numbers.formatDecimal(stock, 4, 2)}"></div>
+  <div th:text="${#numbers.formatDecimal(stock, 4, 2, 'COMMA')}"></div>
+  <div th:text="${#numbers.formatDecimal(stock, 4, 'COMMA', 2, 'POINT')}"></div>
+
+  <div th:text="${#numbers.sequence(1, 10)}"></div>
+  <div th:text="${#arrays.length(#numbers.sequence(1, 10))}"></div>
+
+  <hr>
+
+  <!--#list-->
+  <div th:text="${#lists.isEmpty(seasons)}"></div>
+  <div th:text="${#lists.size(seasons)}"></div>
+
+  <hr>
+
+  <!--#temporals-->
+  <div th:text="${#temporals.format(now, 'yyyy-MM-dd')}"></div>
+  <div th:text="${#temporals.format(now, 'a hh:mm:ss')}"></div>
+  <div th:text="${#temporals.year(now)}"></div>
+  <div th:text="${#temporals.month(now)}"></div>
+  <div th:text="${#temporals.day(now)}"></div>
+
+  <hr>
+
+  <div th:replace="~{nav::menu}"></div>
+
+</body>
+</html>

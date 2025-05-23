@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <h2>javascript 활용</h2>
+
+  <div id="box1"></div>
+  <script>
+    document.getElementById('box1').textContent = '${message}'; // 인식 불가
+  </script>
+
+  <div id="box2"></div>
+  <script>
+    //document.getElementById('box2').textContent = [[${message}]]; // 안녕하세요
+    document.getElementById('box2').textContent = '[[${message}]]'; // '안녕하세요'
+  </script>
+
+  <div id="box3"></div>
+  <div id="box4"></div>
+  <script th:inline="javascript">
+    document.getElementById('box3').textContent = [[${message}]]; // "안녕하세요"
+    document.getElementById('box4').textContent = '[[${message}]]'; // '"안녕하세요"'
+  </script>
+
+  <hr>
+
+  <div id="box5"></div>
+  <script th:inline="javascript">
+    let name = '홍길동';
+    document.getElementById('box5').textContent = `${name}님 [[${message}]]`
+  </script>
+
+  <script th:inline="javascript">
+    const resultMsg = /*[[${result}]]*/ null;
+    if(resultMsg != null){
+      alert(resultMsg);
+    }
+  </script>
+
+</body>
+</html>
