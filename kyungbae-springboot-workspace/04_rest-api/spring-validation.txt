@@ -1,0 +1,24 @@
+## Spring Validation ##
+1. 스프링 프레임워크에서 제공하는 데이터 유효성 검사(Validation) 기능
+2. 객체의 필드에 검증 어노테이션을 붙여 간편하게 유효성 검사를 할 수 있음
+3. 코드의 중복을 줄이고, 데이터의 무결성을 쉽게 보장할 수 있음
+4. Validation 디펜던시 필요함
+
+## Validation 관련 주요 어노테이션 ##
+ 1. 값 존재 여부 체크
+    1) @Null     : null만 허용
+    2) @NotNull  : null을 허용하지 않음 ("", " "는 허용)
+    3) @NotEmpty : null과 ""을 허용하지 않음 (" "는 허용)
+    4) @NotBlank : null과 "", " " 모두 허용하지 않음
+2. 사이즈 체크
+   1) @Size(min=, max=) : 길이가 min 이상 max 이하 일 경우에만 허용
+   2) @Max(value=)      : 길이가 value 이하 일 경우에만 허용
+   3) @Min(value=)      : 길이가 value 이상 일 경우에만 허용
+3. 수 체크
+   1) @Positive       : 양수만을 허용
+   2) @PositiveOrZero : 양수 또는 0만을 허용
+   3) @Negative       : 음수만을 허용
+   4) @NegativeOrZero : 음수 또는 0만을 허용
+4. 날짜 체크
+   1) @Future : 현재보다 미래만을 허용
+   2) @Past   : 현재보다 과거만을 허용
