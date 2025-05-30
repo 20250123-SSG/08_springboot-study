@@ -1,5 +1,6 @@
 package com.podoseee.rest.section01.response;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+@Hidden
 /*
     ## @RestController ##
     1. @Controller와 @ResponseBody을 합친 어노테이션
