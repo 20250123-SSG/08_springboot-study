@@ -1,0 +1,48 @@
+## Spring Validation ##
+1. 스프링 프레임워크에서 제공하는 데이터 유효성 검사(Validation) 기능
+2. 객체의 필드에 검증 어노테이션을 붙여 간편하게 유효성 검사를 할 수 있음
+3. 코드의 중복을 줄이고, 데이터의 무결성을 쉽게 보장할 수 있음
+4. Validation 디펜던시 필요함
+
+## Validation 관련 주요 어노테이션 ##
+1. 값 존재 여부 체크
+   1) @Null     : null만 허용
+   2) @NotNull  : null을 허용하지 않음 ("", " "는 허용)
+   3) @NotEmpty : null과 ""을 허용하지 않음 (" "는 허용)
+   4) @NotBlank : null과 "", " " 모두 허용하지 않음
+2. 문자열의 길이 체크
+   1) @Size(min=, max=) : 길이가 min 이상 max 이하 일 경우에만 허용
+3. 수 체크
+   1) @Positive       : 양수만을 허용
+   2) @PositiveOrZero : 양수 또는 0만을 허용
+   3) @Negative       : 음수만을 허용
+   4) @NegativeOrZero : 음수 또는 0만을 허용
+   5) @Max(value=)    : value 이하 일 경우에만 허용 (최대값 제한)
+   6) @Min(value=)    : value 이상 일 경우에만 허용 (최소값 제한)
+4. 날짜 체크
+   1) @Future : 현재보다 미래만을 허용
+   2) @Past   : 현재보다 과거만을 허용
+5. 정규식
+   1) @Pattern(regexp="정규식")
+
+
+## 그룹 검증 (Group Validation) ##
+1. 하나의 DTO에 여러 상황별 유효성 검증을 적용하고 싶을 때 사용
+   ex) 회원등록 : 아이디, 비번, 이름 체크
+       회원수정 : 비번, 이름 체크
+2. 절차
+   1) 그룹으로 묶어주기 위한 마커 인터페이스 작업
+       ex. public interface Group1{}, public interface Group2{}
+   2) 해당 필드를 어떤 그룹에 적용 시켜 검증을 시킬 껀지 작성
+       ex. @Size(groups=Group1.class)
+           @NotNull(groups={Group1.class, Group2.class})
+   3) 유효성 검증을 하기 위한 @Validated에 적용시킬 Group 지정
+       ex. @Validated(Group1.class)
+           @Validated(Group2.class)
+3. 단, @Valid로 적용시 그룹 적용 불가
+
+          |      @Valid         |       @Validated
+------------------------------------------------------------
+ 주체     |   Jakarta EE 표준   |  스프링 프레임워크
+ 그룹검증 |      사용 불가      |      사용 가능
+ 적용위치 |   메소드 파라미터   |   클래스레벨/파라미터
