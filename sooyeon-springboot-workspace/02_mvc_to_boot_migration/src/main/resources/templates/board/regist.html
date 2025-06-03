@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <div class="container p-3">
+
+    <!-- Header, Nav start -->
+    <th:block th:replace="~{fragment::header-nav}"></th:block>
+    <!-- Header, Nav end -->
+
+    <!-- Section start -->
+    <section class="row m-3" style="min-height: 500px">
+
+      <div class="container border p-5 m-4 rounded">
+        <h2 class="m-4">게시글 등록</h2>
+        <br>
+
+        <form  id="enroll-form" th:action="@{/board/regist.do}" method="POST" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="title">제목 </label>
+            <input type="text" class="form-control" id="title" name="boardTitle" required><br>
+
+            <label for="writer">작성자 </label>
+            <input type="text" class="form-control" id="writer" th:value="${session.loginUser.userId}" readonly><br>
+
+            <label for="uploadFiles">첨부파일 </label>
+            <input type="file" class="form-control-file border file" id="uploadFiles" name="uploadFiles" multiple><br>
+
+            <label for="content">내용 </label>
+            <textarea class="form-control" required name="boardContent" id="content" rows="10" style="resize:none;"></textarea><br>
+          </div>
+          <br>
+          <div align="center">
+            <button type="submit" class="btn btn-primary">등록하기</button>
+            <button type="reset" class="btn btn-danger">취소하기</button>
+          </div>
+
+        </form>
+      </div>
+
+    </section>
+    <!-- Section end -->
+
+    <!-- Footer start -->
+    <th:block th:replace="~{fragment::footer}"></th:block>
+    <!-- Footer end -->
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ino.async.mapper.BoardMapper">
+
+  <resultMap id="boardResultMap" type="BoardDto">
+    <id column="board_id" property="boardId"/>
+    <result column="title" property="title"/>
+    <result column="content" property="content"/>
+    <result column="create_dt" property="createDt"/>
+  </resultMap>
+
+  <select id="selectBoardCount" resultType="_int">
+    select count(*)
+      from tbl_board
+  </select>
+
+  <select id="selectBoardList" resultMap="boardResultMap">
+    select
+        board_id
+      , title
+      , create_dt
+    from
+      tbl_board
+    order by board_id desc
+    limit #{offset}, #{display}
+  </select>
+
+  <select id="selectBoardById" resultMap="boardResultMap">
+    select
+        board_id
+      , title
+      , content
+      , create_dt
+    from
+      tbl_board
+    where
+      board_id = #{boardId}
+  </select>
+
+  <insert id="insertBoard">
+    insert into
+      tbl_board
+      (
+        title
+      , content
+      )
+    values
+      (
+        #{title}
+      , #{content}
+      )
+  </insert>
+</mapper>
+  <!--
+    
+    *  주요 태그 종류
+    1. <select> : select문 작성
+    2. <insert> : insert문 작성
+    3. <update> : update문 작성
+    4. <delete> : delete문 작성
+    5. <resultMap> : 조회된 한 행을 매핑시킬 타입 지정
+                     주로 DTO에 매핑시킬때 사용
+
+    *  주요 속성 종류
+    1. id : 해당 sql문의 식별자 (필수)
+    2. parameterType : 해당 sql문으로 전달되는 파라미터 타입 (선택)
+        ex) parameterType="_int"
+            parameterType="string"
+            parameterType="map"
+            parameterType="com.kangbroo.model.dto.MenuDto" (Alias 미등록시)
+            parameterType="MenuDto" (Alias 등록시)
+    3. resultType : select문 실행 결과 한 row에 대한 타입 (dml문일 경우 미작성)
+        ex) 위의 parameterType과 유사
+    4. resultMap  : select문 실행 결과 한 row에 대해 어떤 resultMap을 참조시킬껀지 resultMap의 id작성 (dml문일 경우 미작성)
+
+    *  주요 MyBatis 내장 별칭
+         자바   |   마이바티스
+       ========================
+         int    |    _int
+        String  |   string
+         List   |    list
+         Map    |     map
+
+    *  파라미터 바인딩 (#{}, ${})
+       만일 sql문으로 전달된 데이터가 있을 경우 파라미터 설정하기
+
+    1. #{} : ?와 같은 역할을 수행하며 내부적으로 PreparedStatement 방식으로 값 처리함
+             해당 값의 타입에 맞춰 값이 바인딩됨
+
+           case 1. code 변수(10)에 숫자가 담겨 넘어올 경우  => #{변수}
+                    #{code}  ==  10
+           case 2. Map{name:"홍길동", age:17}이 넘어올 경우 => #{키}
+                    #{name}  ==  '홍길동'
+                    #{age}   ==  17
+           case 3. MenuDto{menuCode:12, menuName:"음식"} 이 넘어올 경우 => #{필드}
+                    #{menuCode} == 12
+                    #{menuName} == '음식'
+
+    2. ${} : sql문의 메타데이터(테이블명, 컬럼명, sql자체)를 처리할 때 사용함
+             실제 데이터 값을 바인딩할 때 사용하면 SQL Injection에 취약함
+
+            ex) Map{tableName:"tbl_menu", columnName:"menu_name"} 이 넘어올 경우
+                    SELECT * FROM  WHERE  = '열무'
+                    => SELECT * FROM tbl_menu WHERE menu_name = '열무'   로 완성됨
+
+-->

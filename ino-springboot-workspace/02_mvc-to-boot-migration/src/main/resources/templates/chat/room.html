@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    .chat {
+      width: 400px;
+      margin: auto;
+      padding: 10px;
+      border: 1px solid lightgray;
+    }
+
+    .chat-area {
+      height: 500px;
+      overflow: auto;
+    }
+
+    .chat-message {
+      margin: 10px 0px;
+    }
+
+    .chat-message.mine {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .chat-message .send-message {
+      padding: 5px 7px;
+      border-radius: 10px;
+      max-width: 190px;
+      font-size: 0.9em;
+      white-space: pre-line;
+    }
+
+    .chat-message.other .send-message {
+      background: lightgray;
+    }
+
+    .chat-message.mine .send-message {
+      background: #FFE08C;
+    }
+
+    .chat-user {
+      text-align: center;
+      border-radius: 10px;
+      background: lightgray;
+      opacity: 0.5;
+      margin: 20px 0px;
+      color: black;
+      line-height: 30px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container p-3">
+
+  <!-- Header, Nav start -->
+  <th:block th:replace="~{fragment::header-nav}"></th:block>
+  <!-- Header, Nav end -->
+
+  <!-- Section start -->
+  <section class="row m-3" style="min-height: 500px">
+
+    <div class="container border p-5 m-4 rounded">
+      <h2 class="m-4">채팅방</h2>
+
+      <div class="chat">
+
+        <div class="chat-area">
+
+          <!--          <div class="chat-message mine">-->
+          <!--            <div class="send-message">내가보낸 메세지내가보낸 메세지내가보낸 메세지내가보낸 메세지내가보낸 메세지</div>-->
+          <!--          </div>-->
+
+          <!--          <div class="chat-message other">-->
+          <!--            <span class="send-user">상대방</span>-->
+          <!--            <div class="send-message">남이보낸 메세지남이보낸 메세지남이보낸 메세지남이보낸 메세지남이보낸 메세지남이보낸 메세지</div>-->
+          <!--          </div>-->
+
+          <!--          <div class="chat-user entry">-->
+          <!--            xxx님이 들어왔습니다.-->
+          <!--          </div>-->
+
+          <!--          <div class="chat-user exit">-->
+          <!--            xxx님이 나갔습니다.-->
+          <!--          </div>-->
+
+        </div>
+
+        <div class="input-area">
+
+          <div class="form-group">
+            <textarea class="form-control" rows="3" id="message" style="resize:none"></textarea>
+          </div>
+
+          <button type="button" class="btn btn-sm btn-secondary btn-block" onclick="sendMessage();">전송하기</button>
+          <button type="button" class="btn btn-sm btn-danger btn-block" onclick="onClose();">퇴장하기</button>
+
+        </div>
+
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
+    <script>
+
+      // web socket server connecting (등록된 ChatEchoHandler's afterConnectionEstablished 메소드 동작)
+      const sock = new SockJS("[[@{/chat}]]");
+      sock.onmessage = onMessage; // onMessage() 함수 매핑, 서버 소켓 -> 클라이언트 소켓 이벤트핸들러 형태로 매핑
+      sock.onclose = onClose;
+
+      // 메세지 출력 영역 요소, 요소객체임의 명시를 위해 변수명 상단에 $ 표기
+      const $chatArea = document.querySelector('.chat-area');
+
+      // 메세지 전송시 실행 함수
+      function sendMessage() {
+        const $messageInput = document.getElementById('message'); // textArea element
+        sock.send($messageInput.value); // websocket message transfer -> run ChatEchoHandler's handleMessage method
+        $messageInput.value = "";
+      }
+
+      // 내게 메시지가 올 경우 실행되는 함수
+      function onMessage(evt) {
+        // console.log(evt.data);
+        let msgArr = evt.data.split("|"); // {"messageType(chat|entry|exit)", "msgContent", ["senderId"]]
+
+        // chatting area print element
+        let $div = document.createElement("div"); // <div></div>
+        if (msgArr[0] == 'chat') {
+          $div.className = 'chat-message';
+
+          // <div class = 'send-message'>msg</div>
+          let $msgDiv = document.createElement('div');
+          $msgDiv.className = 'send-message';
+          $msgDiv.textContent = msgArr[1];
+
+          // <span class='send-user'>senderId</span>
+          let $userSpan = document.createElement('span');
+          $userSpan.className = 'send-user';
+          $userSpan.textContent = msgArr[2];
+
+          if (msgArr[2] == `[[${session.loginUser.userId}]]`) { // 내가 보낸 메세지의 경우
+            $div.classList.add('mine');
+          } else { // 남이 보냈을 경우
+            $div.classList.add('other');
+            $div.append($userSpan);
+          }
+
+          $div.append($msgDiv);
+        } else {
+          $div.className = 'chat-user ' + msgArr[0];
+          $div.textContent = msgArr[1];
+        }
+        $chatArea.append($div);
+        $chatArea.scrollTop = $chatArea.scrollHeight; // 스크롤 하단 유지
+      }
+
+      //퇴장하기 버튼 클릭시
+      function onClose() {
+        location.href = '[[@{/}]]'; // js 내에서 타임리프 문법 사용 위해  이용
+      }
+
+      // 엔터키 누르면 전송 되도록
+      document.getElementById('message').addEventListener('keydown', evt => {
+        if (evt.key == 'Enter') {
+          if(!evt.shiftKey) { // shift + Enter 아닐 경우
+            evt.preventDefault(); // prevent textArea default Event(line feed)
+            sendMessage();
+          }
+        }
+      })
+    </script>
+  </section>
+  <!-- Section end -->
+
+  <!-- Footer start -->
+  <th:block th:replace="~{fragment::footer}"></th:block>
+  <!-- Footer end -->
+
+</div>
+
+
+</body>
+</html>

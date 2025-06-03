@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script th:inline="javascript">
+  const message = /*[[${message}]]*/ null;
+  if (message != null) {
+    alert(message);
+  }
+</script>
+<h1>login page</h1>
+
+<p th:if="${param.error}" style="color: red;">username or password error</p>
+<p th:if="${param.logout}" style="color: blue;">you did logout</p>
+
+<form th:action="@{/login}" method="post">
+  id : <input type="text" name="userId"><br>
+  pw : <input type="password" name="userPwd"><br>
+  <button type="submit">로그인 요청</button>
+</form>
+</body>
+</html>

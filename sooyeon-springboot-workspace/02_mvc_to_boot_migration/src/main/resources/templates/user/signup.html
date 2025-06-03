@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    .uncheck{display:none;}
+    .smallfont{font-size:0.8em;}
+    .usable{color:green;}
+    .unusable{color:red;}
+  </style>
+</head>
+<body>
+
+  <div class="container p-3">
+
+    <!-- Header, Nav start -->
+    <th:block th:replace="~{fragment::header-nav}"></th:block>
+    <!-- Header, Nav end -->
+
+    <!-- Section start -->
+    <section class="row m-3" style="min-height: 500px">
+
+      <div class="container border p-5 m-4 rounded">
+        <h2 class="m-4">회원가입</h2>
+        <br>
+
+        <form th:action="@{/user/signup.do}" method="POST" id="signup_form">
+          <div class="form-group">
+            <label for="userId">* ID :</label>
+            <input type="text" class="form-control" id="userId" name="userId" placeholder="Please Enter ID" required>
+            <div id="idcheck_result" class="uncheck smallfont"></div>
+            <br>
+
+            <label for="userPwd">* Password :</label>
+            <input type="password" class="form-control" id="userPwd" name="userPwd" placeholder="Please Enter Password" required><br>
+
+            <label for="checkPwd">* Password Check :</label>
+            <input type="password" class="form-control" id="checkPwd" placeholder="Please Enter Password" required><br>
+
+            <label for="userName">* Name :</label>
+            <input type="text" class="form-control" id="userName" name="userName" placeholder="Please Enter Name" required><br>
+
+            <label for="email"> &nbsp; Email :</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Please Enter Email"><br>
+
+            <label for="phone"> &nbsp; Phone :</label>
+            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Please Enter Phone (-포함)"><br>
+
+            <label for="address"> &nbsp; Address :</label>
+            <input type="text" class="form-control" id="address" name="address" placeholder="Please Enter Address"><br>
+
+            <label for=""> &nbsp; Gender : </label> &nbsp;&nbsp;
+            <input type="radio" name="gender" id="Male" value="M">
+            <label for="Male">남자</label> &nbsp;&nbsp;
+            <input type="radio" name="gender" id="Female" value="F">
+            <label for="Female">여자</label><br>
+          </div>
+          <br>
+          <div class="btns" align="center">
+            <button type="submit" class="btn btn-primary" disabled>회원가입</button>
+            <button type="reset" class="btn btn-danger"> 초기화</button>
+          </div>
+        </form>
+
+        <script>
+          // 동적으로 제어할 요소
+          const msgResult = document.querySelector('#signup_form #idcheck_result'); // div 박스
+          const submitBtn = document.querySelector('#signup_form [type=submit]');   // 회원가입 버튼
+
+          function statusChange(flag) { // 1:사용가능 2:사용불가능
+            if(flag == 1){
+              msgResult.classList.add('usable');
+              msgResult.classList.remove('unusable');
+              submitBtn.removeAttribute('disabled');
+            }else if(flag == 2){
+              msgResult.classList.add('unusable');
+              msgResult.classList.remove('usable');
+              submitBtn.setAttribute('disabled', 'disabled');
+            }
+          }
+
+          document.querySelector('#signup_form #userId').addEventListener('keyup', evt => {
+
+            const userIdInput = evt.target;  // 아이디입력란 input 요소
+
+            if(userIdInput.value.trim().length == 0){  // 값이 다 지워지면
+              msgResult.className = 'uncheck smallfont'; // 초기상태로
+            }else {
+              msgResult.classList.remove('uncheck');
+
+              const regExp = /^[a-z\d]{5,12}$/;
+              if(regExp.test(userIdInput.value)){ // 패턴에 부합할 경우 => 아이디 중복체크 url요청 (비동기)
+
+                fetch('/user/idcheck.do?checkId='+userIdInput.value)
+                  .then(response => response.text())
+                  .then(data => {
+                    if(data == 'NOTUSED'){
+                      msgResult.textContent = '사용 가능한 아이디입니다.';
+                      statusChange(1);
+                    }else{
+                      msgResult.textContent = '사용 불가능한 아이디입니다. 다시 입력해주세요.';
+                      statusChange(2);
+                    }
+                  })
+
+              }else{ // 패턴에 부합하지 않을 경우
+                msgResult.textContent = '영문, 숫자 포함 5~12자리로 작성해주세요.';
+                statusChange(2);
+              }
+
+            }
+
+
+          });
+
+        </script>
+
+      </div>
+
+    </section>
+    <!-- Section end -->
+
+    <!-- Footer start -->
+    <th:block th:replace="~{fragment::footer}"></th:block>
+    <!-- Footer end -->
+  </div>
+
+</body>
+</html>

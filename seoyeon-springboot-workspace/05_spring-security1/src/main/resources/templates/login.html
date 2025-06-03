@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <!-- GET     /login   : 해당 페이지 요청 (렌더링) -->
+  <!-- POST    /login   : 실제 로그인 요청 (인증요청) -->
+
+
+  <h2>로그인 페이지</h2>
+
+  <p th:if="${param.error}" style="color:red;">자격 증명에 실패하였습니다.</p>
+  <p th:if="@{param.logout}" style="color:blue;">로그아웃 되었습니다.</p>
+
+  <form th:action="@{/login}" method="post">
+   아이디(계정명): <input type="text" name="userId"> <br>
+   비밀번호 : <input type="password" name="userPwd"> <br>
+   <button type="submit">로그인</button>
+  </form>
+
+</body>
+</html>

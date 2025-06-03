@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>BoardController1</title>
+</head>
+<body>
+
+  <h2>메인페이지입니다.</h2>
+
+  <h3>게시글 목록</h3>
+
+  <table id="board_list" border="1">
+    <thead>
+      <tr>
+        <th>번호</th>
+        <th>제목</th>
+        <th>작성일시</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+  <div id="paging_area"></div>
+
+  <script>
+    //비동기 통신으로 게시글 목록, 페이징 정보 응답받아 화면에 출력
+    function getBoardsAndPaging(page) {
+      fetch('/board/list?page=' + page)
+        .then(response => { // JSON 문자열 => JavaScript 객체
+          if(!response.ok){
+            throw new Error("통신에 실패했습니다.");
+          }
+          return response.json();
+        })
+        .then(data => {
+          /// 게시글 목록 화면 출력
+          let trEl = "";
+          data.boards.forEach(board => { //{boardId: 1000, title: 'Daltfresh', content: null, createDt: '2024-05-15T16:40:34'}
+            trEl += `<tr>
+                      <td>${board.boardId}</td>
+                      <td>${board.title}</td>
+                      <td>${board.createDt}</td>
+                    </tr>`;
+          });
+          document.querySelector('#board_list tbody').innerHTML = trEl;
+
+          ///페이징바 화면에 출력
+          let buttonEl = `<button onclick="getBoardsAndPaging(${data.page - 1})" ${data.page === 1 ? 'disabled' : ''}>
+                            이전
+                          </button>`;
+          for (let p = data.beginPage; p <= data.endPage; p++) {
+            buttonEl += `<button onclick="getBoardsAndPaging(${p});">${p}</button>`;
+          }
+          buttonEl += `<button onclick="getBoardsAndPaging(${data.page + 1})" ${data.page === data.totalPage ? 'disabled' : ''}>
+                         다음
+                       </button>`;
+
+          document.getElementById('paging_area').innerHTML = buttonEl;
+        })
+        .catch(error => {
+          console.log(error.message);
+        });
+    }
+    getBoardsAndPaging(1);
+  </script>
+
+
+  <h3>게시글 상세</h3>
+  글번호 : <input type="text" id="boardId_input">
+  <button id="search_btn">조회</button>
+  <div id="board_result"></div>
+
+  <script>
+    document.getElementById('search_btn').addEventListener('click', (evt) => {
+      const $input = document.getElementById('boardId_input');
+
+      fetch('/board/detail?no='+$input.value)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          document.getElementById('board_result').innerHTML =
+            `<ul>
+              <li>글번호 : ${data.boardId}</li>
+              <li>글제목 : ${data.title}</li>
+              <li>글내용 : ${data.content}</li>
+              <li>작성일시 : ${data.createDt}</li>
+             </ul>`;
+        });
+    })
+  </script>
+
+
+
+  <hr>
+  <h3>게시글 등록</h3>
+  <form id="regist_form">
+    제목 : <input type="text" name="title"> <br>
+    내용 : <textarea name="content"></textarea> <br>
+    <button type="button" id="regist_btn">등록</button>
+  </form>
+
+  <script>
+    document.getElementById('regist_btn').addEventListener('click', (evt) => {
+      //전송할 데이터 (FormData 형식으로 title=xxx&content=xxxxx)
+      const requestData = new FormData(document.getElementById('regist_form')); //requestData.appand("","") 동작없이 바로 생성
+
+      fetch('/board/regist', {
+        method: 'POST',
+        body: requestData
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          alert(data.msg);
+
+          if(data.status === 200) {
+            document.getElementById('regist_form').reset();
+            getBoardsAndPaging(1);
+          }
+        })
+
+    });
+  </script>
+</body>
+</html>

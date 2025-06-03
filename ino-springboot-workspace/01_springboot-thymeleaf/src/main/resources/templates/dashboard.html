@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${pageTitle}"></title>
+</head>
+<body>
+<h1 th:text="'hello,' + ${adminName}">welcome</h1>
+<div th:include="~{nav::menu}"></div>
+<table th:fragment="table1">
+  <thead>
+  <tr>
+    <td>age</td>
+    <td>name</td>
+    <td>product</td>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>1</td>
+    <td>2</td>
+    <td>3</td>
+  </tr>
+  </tbody>
+</table>
+<div th:replace="~{dashboard::table1}"></div>
+</body>
+</html>

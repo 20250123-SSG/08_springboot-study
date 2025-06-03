@@ -4,7 +4,7 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.podoseee.app.mapper.UserMapper">
 
-  <resultMap id="userResultMap" type="com.podoseee.app.dto.UserDto">
+  <resultMap id="userResultMap" type="UserDto">
     <id column="user_no" property="userNo" />
     <result column="user_id" property="userId" />
     <result column="user_pwd" property="userPwd" />
@@ -20,55 +20,97 @@
   </resultMap>
 
   <select id="selectUserById" resultMap="userResultMap">
-    SELECT * FROM tbl_user
-    WHERE role IN ('U', 'A')
-    AND user_id = #{userId}
+    select
+    user_no
+    , user_id
+    , user_pwd
+    , user_name
+    , email
+    , gender
+    , phone
+    , address
+    , profile_url
+    , signup_date
+    , modify_date
+    , role
+    from
+    tbl_user
+    where
+    role in ('U', 'A')
+    and user_id = #{userId}
   </select>
 
   <select id="selectUserCountById" resultType="_int">
-    SELECT COUNT(*) FROM tbl_user WHERE user_id = #{checkId}
+    select
+    count(*)
+    from
+    tbl_user
+    where
+    user_id = #{checkId}
   </select>
 
-  <insert id="insertUser" parameterType="com.podoseee.app.dto.UserDto">
-    INSERT INTO tbl_user (
-    user_id, user_pwd, user_name, email, gender, phone, address
-    ) VALUES (
-    #{userId}, #{userPwd}, #{userName},
-    NULLIF(#{email}, ''),
-    NULLIF(#{gender}, ''),
-    NULLIF(#{phone}, ''),
-    NULLIF(#{address}, '')
+  <insert id="insertUser">
+    insert into
+    tbl_user
+    (
+    user_id
+    , user_pwd
+    , user_name
+    , email
+    , gender
+    , phone
+    , address
+    )
+    values
+    (
+    #{userId}
+    , #{userPwd}
+    , #{userName}
+    , NULLIF(#{email}, '')
+    , NULLIF(#{gender}, '')
+    , NULLIF(#{phone}, '')
+    , NULLIF(#{address}, '')
     )
   </insert>
 
   <update id="updateProfileImg">
-    UPDATE tbl_user
-    SET profile_url = #{profileURL}, modify_date = NOW()
-    WHERE user_id = #{userId}
+    update
+    tbl_user
+    set
+    profile_url = #{profileURL}
+    , modify_date = now()
+    where
+    user_id = #{userId}
   </update>
 
   <update id="updateUser">
-    UPDATE tbl_user
-    SET user_name = #{userName},
-    email = #{email},
-    phone = #{phone},
-    address = #{address},
-    gender = #{gender},
-    modify_date = NOW()
-    WHERE user_id = #{userId}
+    update
+    tbl_user
+    set
+    user_name = #{userName}
+    , email = #{email}
+    , phone = #{phone}
+    , address = #{address}
+    , gender = #{gender}
+    , modify_date = now()
+    where
+    user_id = #{userId}
   </update>
 
+  <!-- 탈퇴된 회원의 정보를 가지고 잇으면 안됨 (개인정보지워야됨) => 해당 회원의 정보들 다 지우고 이름은 마스킹처리 -->
   <update id="deleteUser">
-    UPDATE tbl_user
-    SET user_name = CONCAT(SUBSTR(user_name, 1, 1), RPAD('*', CHAR_LENGTH(user_name)-1, '*')),
-    email = NULL,
-    gender = NULL,
-    phone = NULL,
-    address = NULL,
-    profile_url = NULL,
-    modify_date = NOW(),
-    role = 'R'
-    WHERE user_id = #{userId}
+    update
+    tbl_user
+    set
+    user_name =  concat(substr(user_name,1,1), rpad('*', char_length(user_name)-1, '*'))
+    , email = null
+    , gender = null
+    , phone = null
+    , address = null
+    , profile_url = null
+    , modify_date = now()
+    , role = 'R'
+    where
+    user_id = #{userId}
   </update>
-
 </mapper>

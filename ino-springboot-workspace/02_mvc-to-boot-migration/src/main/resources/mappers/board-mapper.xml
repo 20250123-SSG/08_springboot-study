@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ino.app.mapper.BoardMapper">
+
+  <resultMap id="boardResultMap" type="BoardDto">
+    <id column="board_no" property="boardNo"/>
+    <result column="board_title" property="boardTitle"/>
+    <result column="board_content" property="boardContent"/>
+    <result column="user_id" property="boardWriter"/>
+    <result column="read_count" property="readCount"/>
+    <result column="regist_date" property="registDate"/>
+    <result column="attach_count" property="attachCount"/>
+  </resultMap>
+
+  <resultMap id="attachResultMap" type="AttachDto">
+    <id column="file_no" property="fileNo" />
+    <result column="file_path" property="filePath" />
+    <result column="filesystem_name" property="filesystemName" />
+    <result column="original_name" property="originalName" />
+  </resultMap>
+
+
+  <select id="selectBoardListCount" resultType="_int">
+    select
+        count(*)
+    from
+        tbl_board
+    where
+        status = 'Y'
+  </select>
+
+  <select id="selectBoardList" resultMap="boardResultMap">
+    select
+        b.board_no
+      , board_title
+      , user_id
+      , read_count
+      , date_format(regist_date, '%Y-%m-%d') as regist_date
+      , (
+          select count(*)
+            from tbl_attachment
+           where ref_board_no = b.board_no
+        ) as attach_count
+    from
+        tbl_board b
+        join tbl_user on (user_no = board_writer)
+    where
+        status = 'Y'
+    order by
+        board_no desc
+    limit
+        #{offset}, #{display}
+  </select>
+
+  <insert id="insertBoard" useGeneratedKeys="true" keyProperty="boardNo">
+    insert into tbl_board
+        (
+          board_title
+        , board_writer
+        , board_content
+        )
+    values
+        (
+          #{boardTitle}
+        , #{boardWriter}
+        , #{boardContent}
+        )
+  </insert>
+
+  <insert id="insertAttach">
+    insert into
+        tbl_attachment
+        (
+          file_path
+        , filesystem_name
+        , original_name
+        , ref_board_no
+        )
+    values
+        (
+          #{filePath}
+        , #{filesystemName}
+        , #{originalName}
+        , #{refBoardNo}
+        )
+  </insert>
+
+  <select id="selectBoardByNo" resultMap="boardResultMap">
+    select
+        board_no
+      , board_title
+      , board_content
+      , user_id
+      , date_format(regist_date, '%Y-%m-%d') as regist_date
+    from
+        tbl_board
+        join tbl_user on (user_no = board_writer)
+    where
+        status = 'Y'
+    and board_no = #{no}
+  </select>
+
+  <select id="selectAttachByBoardNo" resultMap="attachResultMap">
+    select
+        file_no
+      , file_path
+      , filesystem_name
+      , original_name
+    from
+        tbl_attachment
+    where
+        ref_board_no = #{no}
+  </select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</mapper>

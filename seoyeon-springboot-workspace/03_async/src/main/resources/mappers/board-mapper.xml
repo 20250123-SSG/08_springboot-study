@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.podoseee.async.mapper.BoardMapper">
+
+  <resultMap id="boardResultMap" type="BoardDto">
+    <id column="board_id" property="boardId"/>
+    <result column="title" property="title"/>
+    <result column="content" property="content"/>
+    <result column="create_dt" property="createDt"/>
+  </resultMap>
+
+  <select id="selectBoardCount" resultType="_int">
+    select count(*)
+      from tbl_board
+  </select>
+
+  <select id="selectBoardList" resultMap="boardResultMap">
+    select board_id, title, create_dt
+      from tbl_board
+    order by board_id desc
+    limit #{offset},  #{display}
+  </select>
+
+  <select id="selectBoardById" resultMap="boardResultMap">
+    select board_id, title, content, create_dt
+      from tbl_board
+    where board_id = #{boardId}
+  </select>
+
+  <insert id="insertBoard">
+    insert into tbl_board(title, content)
+    values(#{title}, #{content})
+  </insert>
+
+  </mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

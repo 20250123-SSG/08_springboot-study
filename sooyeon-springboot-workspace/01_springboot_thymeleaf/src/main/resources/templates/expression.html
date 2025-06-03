@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <h2>expression</h2>
+
+  <div>
+    <div th:text="${name}"></div> <!--컨트롤러로 전달받은 값은 속성으로 작성-->
+    <div th:text="'이름 : '+${name}"></div>
+    <div th:text="|이름: ${name}|"></div> <!--선호 "||" -->
+    <div th:utext="${age}"></div> <!--html 태그-->
+  </div>
+
+  <hr>
+
+  <!--측정 dto의 필드값 출력 1-->
+  <div th:text="${user.no}"></div>
+  <div th:text="${user.name}"></div>
+  <div th:text="${user.age}"></div>
+  <div th:text="${user.registerDate}"></div>
+  <!--측정 dto의 필드값 출력 2 - 객체 변수 선언-->
+  <th:block th:object="${user}">
+    <div th:text="*{no}"></div>
+    <div th:text="*{name}"></div>
+    <div th:text="*{age}"></div>
+    <div th:text="*{registerDate}"></div>
+  </th:block>
+  <hr>
+  <div th:text="${forecast.weather}"></div>
+  <div th:text="${forecast.temperature}"></div>
+  <br>
+  <th:block th:object="${forecast}">
+    <div th:text="*{weather}"></div>
+    <div th:text="*{temperature}"></div>
+  </th:block>
+
+  <hr>
+
+  <form th:object="${user}">
+    <input type="number" th:value="*{no}"> <br>
+    <input type="text" th:field="*{name}"> <br>
+    <textarea th:text="*{age}"></textarea>
+    <input type="text" th:field="*{registerDate}">
+    <input type="date" th:value="*{#temporals.format(registerDate,'yyyy-MM-dd')}">
+  </form>
+
+
+  <hr>
+  인사말 : <span th:text="#{greeting}"></span>
+
+  <hr>
+
+  <p th:fragment="side">side</p> <!--조각 만들기(expression::side)-->
+  <div th:replace="~{expression::side}">대체</div>
+  <div th:insert="~{expression::side}">삽입</div>
+
+  <div th:replace="~{nav::menu}"></div> <!--nva.html 조각 가져오기-->
+
+</body>
+</html>

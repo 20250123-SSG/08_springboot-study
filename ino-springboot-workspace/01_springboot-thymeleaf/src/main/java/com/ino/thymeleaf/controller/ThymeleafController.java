@@ -56,5 +56,19 @@ public class ThymeleafController {
         }
 
         model.addAttribute("list", userList);
+        List<UserDto> userList1 = new ArrayList<>();
+        userList1.add(new UserDto(1, "ino", 20, LocalDateTime.now()));
+        userList1.add(new UserDto(2, "ino2", 25, LocalDateTime.now()));
+        userList1.add(new UserDto(3, "ino3", 30, LocalDateTime.now()));
+        model.addAttribute("userlist", userList);
+
+    }
+
+    // Controller.java
+    @GetMapping("/dashboard")
+    public void showDashboard(Model model) {
+        model.addAttribute("adminName", "김관리");
+        model.addAttribute("lastLoginTime", "2025-05-20 14:30:00");
+        model.addAttribute("pageTitle", "관리자 대시보드");
     }
 }

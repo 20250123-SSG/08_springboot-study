@@ -1,0 +1,143 @@
+<html>
+<head>
+  <title>Title</title>
+  <style>
+    #profileImg{
+      width:250px;
+      height:250px;
+      border:1px solid lightgray;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+<div class="container p-3">
+
+  <!-- Header, Nav start -->
+  <th:block th:replace="~{fragment::header-nav}"/>
+  <!-- Header, Nav end -->
+
+  <!-- Section start -->
+  <section class="row m-3" style="min-height: 500px">
+
+    <div class="container border p-5 m-4 rounded">
+      <h2 class="m-4">마이페이지</h2>
+      <br>
+
+      <div align="center">
+        <img class="profileImg" th:src="@{${#strings.defaultString(session.loginUser.profileURL, '/images/defaultProfile.png')}}"
+        onclick="document.getElementById('profileImgFile').click();">&nbsp;
+
+        <input type="file" class="file" id="profileImgFile" style="display:none;">
+      </div>
+
+      <script>
+        document.getElementById('profileImgFile').addEventListener('change', evt => {
+
+          const fileInput = evt.target;   // input type=file 요소객체
+
+          /*
+            fileInput.files : FileList 객체 [File, File, ..]
+            fileInput.files.length : 선택된 파일의 개수
+            fileInput.files[0] : 선택된 첫번째 파일 객체
+           */
+          if(fileInput.files.length != 0){
+
+            // 전송할 파일 => FormData 객체 담기
+            let formData = new FormData();
+            formData.append('uploadFile', fileInput.files[0]);
+
+            fetch('/user/modifyProfile.do', {
+              method: 'POST',
+              body: formData // FormData객체 전송시 기본적으로 multipart/form-data
+            })
+              .then(response => response.text())
+              .then(data => {
+                alert("프로필 변경 성공");
+                location.reload();
+              })
+          }
+
+
+
+        })
+      </script>
+
+
+
+
+      <form action="정보수정요청url" method="POST" id="modify_form" th:object="${session.loginUser}">
+        <div class="form-group">
+          <label for="userId">* ID :</label>
+          <input type="text" class="form-control" id="userId" name="" th:value="*{userId}" readonly><br>
+
+          <label for="userName">* Name :</label>
+          <input type="text" class="form-control" id="userName" name="" th:value="*{userName}"><br>
+
+          <label for="email"> &nbsp; Email :</label>
+          <input type="email" class="form-control" id="email" name="" th:value="*{email}"><br>
+
+          <label for="phone"> &nbsp; Phone :</label>
+          <input type="tel" class="form-control" id="phone" name="" th:value="*{phone}"><br>
+
+          <label for="address"> &nbsp; Address :</label>
+          <input type="text" class="form-control" id="address" name="" th:value="${address}"><br>
+
+          <label for=""> &nbsp; Gender : </label> &nbsp;&nbsp;
+          <input type="radio" name="" id="Male" value="M" th:checked="*{gender} == 'M'">
+          <label for="Male">남자</label> &nbsp;&nbsp;
+          <input type="radio" name="" id="Female" value="F" th:checked="*{gender} == 'F'">
+          <label for="Female">여자</label><br>
+
+        </div>
+        <br>
+        <div class="btns" align="center">
+          <button type="submit" class="btn btn-primary">수정하기</button>
+          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteForm">회원탈퇴</button>
+        </div>
+      </form>
+
+    </div>
+
+  </section>
+  <!-- Section end -->
+
+  <!-- Footer start -->
+  <th:block th:replace="~{fragment::footer}"/>
+  <!-- Footer end -->
+
+</div>
+
+<!-- 회원탈퇴 버튼 클릭시 보여질 Modal -->
+<div class="modal" id="deleteForm">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">회원탈퇴</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body" align="center">
+
+        <b>
+          탈퇴 후 복구가 불가능합니다. <br>
+          정말로 탈퇴 하시겠습니까?
+        </b>
+
+        <form action="탈퇴요청url" method="POST">
+          비밀번호 :
+          <input type="password" name="" required>
+
+          <button type="submit" class="btn btn-danger">탈퇴하기</button>
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

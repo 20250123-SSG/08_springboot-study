@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+  <div class="container p-3">
+
+    <!-- Header, Nav start -->
+    <th:block th:replace="~{fragment::header-nav}"></th:block>
+    <!-- Header, Nav end -->
+
+    <!-- Section start -->
+    <section class="row m-3" style="min-height: 500px">
+
+      <div class="container border p-5 m-4 rounded">
+        <h2 class="m-4">게시글 상세</h2>
+        <br>
+
+        <a class="btn btn-secondary" style="float:right" th:href="@{/board/list.page}">목록으로</a>
+        <br><br>
+
+        <table align="center" class="table">
+          <tr>
+            <th width="120">제목</th>
+            <td colspan="3" th:text="${board.boardTitle}"></td>
+          </tr>
+          <tr>
+            <th>작성자</th>
+            <td width="400" th:text="${board.boardWriter}"></td>
+            <th width="120">작성일</th>
+            <td th:text="${board.registDate}"></td>
+          </tr>
+          <tr>
+            <th>첨부파일</th>
+            <td colspan="3">
+
+              <th:block th:if="${#lists.isEmpty(attaches)}">
+                첨부파일이 없습니다.
+              </th:block>
+
+              <th:block th:unless="${#lists.isEmpty(attaches)}">
+                <th:block th:each="attach:${attaches}" th:object="${attach}">
+                  <a th:href="@{|*{filePath}/*{filesystemName}|}"
+                     th:download="*{originalName}"
+                     th:text="*{originalName}"/> <br>
+                </th:block>
+              </th:block>
+
+            </td>
+          </tr>
+          <tr>
+            <th>내용</th>
+            <td colspan="3"></td>
+          </tr>
+          <tr>
+            <td colspan="4"><p style="height:150px" th:text="${board.boardContent}"></p></td>
+          </tr>
+        </table>
+        <br>
+
+        <th:block th:if="${session.loginUser != null and session.loginUser.userId == board.boardWriter}">
+          <!-- 수정하기, 삭제하기 버튼은 이글이 본인글일 경우만 보여져야됨 -->
+          <div align="center">
+            <a class="btn btn-primary" href="수정페이지요청url">수정하기</a>
+            <a class="btn btn-danger" href="삭제요청url">삭제하기</a>
+          </div>
+        </th:block>
+        <br><br>
+
+        <table id="reply_area" class="table" align="center">
+          <thead>
+          <tr>
+            <th colspan="2" width="650">
+              <textarea class="form-control" id="reply_content" rows="2" style="resize:none; width:100%"></textarea>
+            </th>
+            <th style="vertical-align: middle"><button class="btn btn-secondary" id="reply_submit">등록하기</button></th>
+          </tr>
+          <tr>
+            <td colspan="3">댓글 (<span id="rcount">3</span>) </td>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th>user02</th>
+            <td>댓글입니다.너무웃기다앙</td>
+            <td>2020-04-10</td>
+          </tr>
+          <tr>
+            <th>user01</th>
+            <td>많이봐주세용</td>
+            <td>2020-04-08</td>
+          </tr>
+          <tr>
+            <th>admin</th>
+            <td>댓글입니다ㅋㅋㅋ</td>
+            <td>2020-04-02</td>
+          </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+    </section>
+    <!-- Section end -->
+
+    <!-- Footer start -->
+    <th:block th:replace="~{fragment::footer}"></th:block>
+    <!-- Footer end -->
+
+  </div>
+
+
+
+</body>
+</html>

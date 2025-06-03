@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <h2>타임리프의유틸리키객페</h2>
+
+
+  <!--#string-->
+  <div th:text="${#strings.length(title)}"></div> <!--19-->
+  <div th:text="${#strings.isEmpty(content)}"></div> <!--true=-->
+  <div th:text="${#strings.defaultString(content, 'base content')}"></div> <!--base content-->
+  <div th:text="${#strings.abbreviate(title, 10)}"></div> <!--spring ...-->
+
+  <hr>
+
+  <div th:text="${#numbers.formatInteger(stock, 4)}"></div> <!--3000-->
+  <div th:text="${#numbers.formatInteger(stock, 4, 'COMMA')}"></div> <!--3,000-->
+  <div th:text="${#numbers.formatDecimal(stock, 4, 2)}"></div> <!--3000.50-->
+  <div th:text="${#numbers.formatDecimal(stock, 4, 'COMMA',2, 'POINT')}"></div> <!--3,000.50-->
+
+  <div th:text="${#numbers.sequence(1, 10)}"></div>
+  <div th:text="${#arrays.length(#numbers.sequence(1, 10))}"></div>
+
+  <!--#lists-->
+  <div th:text="${#lists.isEmpty(session)}"></div>
+  <div th:text="${#lists.size(session)}"></div>
+
+  <hr>
+
+  <div th:text="${#temporals.format(now, 'yyyy-MM-dd')}"></div>
+  <div th:text="${#temporals.format(now, 'a hh:mm:ss')}"></div>
+  <div th:text="${#temporals.year(now)}"></div>
+  <div th:text="${#temporals.month(now)}"></div>
+  <div th:text="${#temporals.day(now)}"></div>
+
+  <hr>
+
+  <div th:replace="~{nav::menu}"></div>
+
+</body>
+</html>

@@ -19,6 +19,7 @@ package com.podoseee.app.controller;
 
 import com.podoseee.app.dto.UserDto;
 import com.podoseee.app.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -42,7 +43,10 @@ public class UserController {
     public void signupPage(){} // 회원가입페이지 이동용
 
     @GetMapping("/myinfo.page")
-    public void myinfoPage(){} // 마이페이지 이동용
+    public void myinfoPage(){
+    // 로그인 여부 체크 필요
+
+    } // 마이페이지 이동용
 
     @ResponseBody
     @GetMapping("/idcheck.do")
@@ -62,9 +66,10 @@ public class UserController {
     }
 
     @PostMapping("/signin.do")
-    public String signin(UserDto user,
-                         RedirectAttributes redirectAttributes,
-                         HttpSession session) {
+    public String signin(UserDto user
+                        , RedirectAttributes redirectAttributes
+                        , HttpSession session
+                        , HttpServletRequest request) {
 
         Map<String, Object> map = userService.loginUser(user);
         redirectAttributes.addFlashAttribute("message", map.get("message"));
@@ -73,7 +78,7 @@ public class UserController {
             session.setAttribute("loginUser", map.get("user")); // 세션에 저장
         }
 
-        return "redirect:/";
+        return "redirect:" + request.getHeader("referer"); // 이전에 보던 페이지의 url 재요청
     }
 
     @GetMapping("/signout.do")
@@ -86,7 +91,7 @@ public class UserController {
     @ResponseBody
     public String modifyProfile(MultipartFile uploadFile, HttpSession session){
         UserDto loginUser = (UserDto)session.getAttribute("loginUser");
-        Map<String, Object> map = userService.modifyUserProfile(loginUser, uploadFile); // 수정
+        Map<String, Object> map = userService.modifyUserProfile(loginUser.getUserId(), uploadFile); // 수정
         if(map.get("profileURL") != null){ // 프로필변경 성공
             loginUser.setProfileURL((String)map.get("profileURL"));
         }

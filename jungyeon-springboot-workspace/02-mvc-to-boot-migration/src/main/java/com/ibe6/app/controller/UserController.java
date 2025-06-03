@@ -20,6 +20,7 @@ package com.ibe6.app.controller;
 
 import com.ibe6.app.dto.UserDto;
 import com.ibe6.app.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -31,7 +32,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
-import java.util.Objects;
 
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -67,7 +67,8 @@ public class UserController {
     @PostMapping("/signin.do")
     public String signin(UserDto user
                        , RedirectAttributes redirectAttributes
-                       , HttpSession session){
+                       , HttpSession session
+                       , HttpServletRequest request){
 
         Map<String, Object> map = userService.loginUser(user);
         redirectAttributes.addFlashAttribute("message", map.get("message"));
@@ -76,13 +77,14 @@ public class UserController {
             session.setAttribute("loginUser", map.get("user"));
         }
 
-        return "redirect:/"; // 응답코드 302
+        return "redirect:" + request.getHeader("referer"); // 응답코드 302
     }
 
     @GetMapping("/signout.do")
-    public String signout(HttpSession session){
+    public String signout(HttpSession session
+                        , HttpServletRequest request){
         session.invalidate();
-        return "redirect:/";
+        return "redirect:" + request.getHeader("referer");
     }
 
     @ResponseBody

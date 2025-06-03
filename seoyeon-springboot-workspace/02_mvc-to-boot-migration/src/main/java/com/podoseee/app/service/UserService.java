@@ -15,5 +15,5 @@ public interface UserService {
     // 로그인
     Map<String, Object> loginUser(UserDto user);
     // 회원프로필수정
-    Map<String, Object> modifyUserProfile(UserDto user, MultipartFile uploadFile);
+    Map<String, Object> modifyUserProfile(String user, MultipartFile uploadFile);
 }

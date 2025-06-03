@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <h2>메인페이지입니다.</h2>
+
+  <!-- BoardController2 -->
+
+  <h3>게시글 목록</h3>
+
+  <table id="board_list" border="1">
+    <thead>
+      <tr>
+        <th>번호</th>
+        <th>제목</th>
+        <th>작성일시</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div id="paging_area"></div>
+
+  <script>
+    function getBoardsAndPaging(page){
+      // 비동기 통신으로 게시글 목록, 페이징 정보 응답 받아 화면에 출력
+      fetch(`/board/list?page=` + page)
+        //.then(response => response.json()) // JSON문자열 => JavaScript 객체
+        .then(response => {
+          if(response.ok){
+            console.log("통신성공");
+          }else {
+            throw new Error("통신에 실패하였습니다.")
+          }
+          return response.json();
+        })
+        .then(data => {
+
+          console.log(data);
+
+          // 게시글 목록(data.boards) 화면에 출력
+          let trEl = "";
+          data.boards.forEach(board =>{ // board == {boardId:xx, title:xx, content:xx, createDt:xx}
+            trEl += `<tr>
+                      <td>${board.boardId}</td>
+                      <td>${board.title}</td>
+                      <td>${board.createDt}</td>
+                    </tr>`;
+          });
+          document.querySelector('#board_list tbody').innerHTML = trEl;
+
+          // 페이징바 화면에 출력
+          let buttonEl = `<button onclick="getBoardsAndPaging(${data.page - 1});"${data.page == 1 ? 'disabled' : ''}> < </button>`
+          for(let p=data.beginPage; p<=data.endPage; p++){
+            buttonEl += `<button onclick="getBoardsAndPaging(${p});">${p}</button>`;
+          }
+          buttonEl += `<button onclick="getBoardsAndPaging(${data.page + 1});"${data.page == data.totalPage ? 'disabled' : ''}> > </button>`
+
+          document.getElementById('paging_area').innerHTML = buttonEl;
+
+        })
+        .catch(error =>{
+          console.log(error.message);
+        })
+    }
+    getBoardsAndPaging(1);
+  </script>
+
+  <hr>
+
+  <h3>게시글 상세</h3>
+  글번호 : <input type="text" id="boardId_input">
+  <button id="search_btn">조회</button>
+
+  <div id="board_result"></div>
+
+  <script>
+    document.getElementById('search_btn').addEventListener('click', evt => {
+
+      const $input = document.getElementById('boardId_input');
+
+      fetch('/board/detail?no=' + $input.value)
+        .then(response => {
+
+          if(!response.ok){
+            throw new Error('게시글 상세 조회 실패')
+          }
+
+          return response.json();
+        })
+        .then(data => {
+          console.log(data); // {boardID:xx, title:xx, content:xx, createDt:xx}
+          document.getElementById('board_result').innerHTML = `
+            <ul>
+              <li>글번호: ${data.boardId}</li>
+              <li>글제목: ${data.title}</li>
+              <li>글내용: ${data.content}</li>
+              <li>작성일시: ${data.createDt}</li>
+            </ul>
+          `;
+        })
+        .catch(error => {
+          alert(error.message);
+        })
+    })
+  </script>
+
+  <hr>
+
+  <h3>게시글 등록</h3>
+    제목: <input type="text" name="title" id="title"> <br>
+    내용: <textarea name="content" id="content"></textarea> <br>
+    <button type="button" id="regist_btn">등록</button>
+
+  <script>
+    document.getElementById('regist_btn').addEventListener('click', evt => {
+
+      fetch('/board/regist', {
+        method: 'POST',
+        headers:{
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: document.getElementById('title').value,
+          content: document.getElementById('content').value
+        })
+      })
+        .then(response => {
+
+          if(!response.ok){
+            throw new Error('게시글 등록 실패');
+          }
+
+          return response.json()
+        })
+        .then(data =>{
+          alert(data.msg);
+          //document.getElementById('regist_form').reset();
+          getBoardsAndPaging(1);
+        })
+        .catch(error =>{
+          alert(error.message);
+        })
+    })
+  </script>
+
+</body>
+</html>

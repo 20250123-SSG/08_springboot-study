@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.younggalee.async.mapper.BoardMapper">
+
+    <!-- 쿼리문 작성 후에 이렇게 접어놓고 이후 개발하면 편할듯-->
+
+    <resultMap id="boardResultMap" type="BoardDto">
+        <id column="board_id" property="boardId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="create_dt" property="createDt"/>
+    </resultMap>
+
+    <!--목록조회(페이지네이션)-->
+
+        <!--전제 게시글 몇개인지 조회-->
+    <select id="selectBoardCount" resultType="_int">
+        select count(*)
+            from tbl_board
+    </select>
+
+        <!-- 게시글 목록 조회-->
+    <select id="selectBoardList" resultMap="boardResultMap">
+        select board_id, title, create_dt
+            from tbl_board
+        order by board_id desc
+        limit #{offset}, #{display}
+    </select>
+
+
+    <!-- 글번호로 상세조회 -->
+    <select id="selectBoardById" resultMap="boardResultMap">
+        select board_id, title, content, create_dt
+            from tbl_board
+            where board_id = #{boardId}
+    </select>
+
+    <!-- 글등록 -->
+    <insert id="insertBoard">
+        insert into tbl_board(title, content)
+        values(#{title}, #{content})
+    </insert>
+
+</mapper>

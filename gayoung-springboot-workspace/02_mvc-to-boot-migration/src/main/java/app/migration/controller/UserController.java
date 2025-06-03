@@ -19,6 +19,7 @@ package app.migration.controller;
 
 import app.migration.dto.UserDto;
 import app.migration.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
@@ -41,7 +42,9 @@ public class UserController {
     public void signupPage(){} // 회원가입페이지 이동용
 
     @GetMapping("/myinfo.page")
-    public void myinfoPage(){} // 마이페이지 이동용
+    public void myinfoPage(){
+        //로그인 여부체크 필요 (servlet>controller 넘어가기전 인터셉터에서)
+    } // 마이페이지 이동용
 
     @ResponseBody
     @GetMapping("/idcheck.do") //해당 url로
@@ -60,7 +63,8 @@ public class UserController {
     }
 
     @PostMapping("/signin.do")
-    public String signin(UserDto user, RedirectAttributes redirectAttributes, HttpSession session) {
+    public String signin(UserDto user, RedirectAttributes redirectAttributes, HttpSession session
+                            , HttpServletRequest request) {
         Map<String, Object> map = userService.loginUser(user);
         // 로그인 성공시에만 dto 존재함. >> session에 담기
         redirectAttributes.addFlashAttribute("message", map.get("message"));
@@ -69,7 +73,8 @@ public class UserController {
             session.setAttribute("loginUser", map.get("user"));
         }
 
-        return "redirect:/"; // 응답코드 302
+        //return "redirect:/"; // 응답코드 302 / 로그인만 하면 매번 main으로 가는 이유
+        return "redirect:" + request.getHeader("referer"); //signin.do 이전에 보고 있던 페이지 URL 주소 가져오기 (재요청)
     }
 
     @GetMapping

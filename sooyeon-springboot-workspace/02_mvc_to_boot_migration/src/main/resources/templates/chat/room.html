@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    .chat{width:400px; margin:auto; padding:10px; border:1px solid lightgray;}
+    .chat-area{height:500px; overflow: auto;}
+
+    .chat-message{margin:10px 0px;}
+    .chat-message.mine{display: flex; justify-content:flex-end;}
+
+    .chat-message .send-message{
+      padding: 5px 7px;
+      border-radius: 10px;
+      max-width: 190px;
+      font-size:0.9em;
+      white-space: pre-line;
+    }
+    .chat-message.other .send-message{background: lightgray;}
+    .chat-message.mine .send-message{background: #FFE08C;}
+
+    .chat-user {
+      text-align:center;
+      border-radius:10px;
+      background: lightgray;
+      opacity: 0.5;
+      margin: 20px 0px;
+      color: black;
+      line-height: 30px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container p-3">
+
+  <!-- Header, Nav start -->
+  <th:block th:replace="~{fragment::header-nav}"></th:block>
+  <!-- Header, Nav end -->
+
+  <!-- Section start -->
+  <section class="row m-3" style="min-height: 500px">
+
+    <div class="container border p-5 m-4 rounded">
+      <h2 class="m-4">채팅방</h2>
+
+      <div class="chat">
+
+        <div class="chat-area">
+
+<!--          <div class="chat-message mine">-->
+<!--            <div class="send-message">내가보낸 메세지내가보낸 메세지내가보낸 메세지내가보낸 메세지내가보낸 메세지</div>-->
+<!--          </div>-->
+
+<!--          <div class="chat-message other">-->
+<!--            <span class="send-user">상대방</span>-->
+<!--            <div class="send-message">남이보낸 메세지남이보낸 메세지남이보낸 메세지남이보낸 메세지남이보낸 메세지남이보낸 메세지</div>-->
+<!--          </div>-->
+
+<!--          <div class="chat-user entry">-->
+<!--            xxx님이 들어왔습니다.-->
+<!--          </div>-->
+
+<!--          <div class="chat-user exit">-->
+<!--            xxx님이 나갔습니다.-->
+<!--          </div>-->
+
+        </div>
+
+        <div class="input-area">
+
+          <div class="form-group">
+            <textarea class="form-control" rows="3" id="message" style="resize:none"></textarea>
+          </div>
+
+          <button type="button" class="btn btn-sm btn-secondary btn-block" onclick="sendMassage()">전송하기</button>
+          <button type="button" class="btn btn-sm btn-danger btn-block" onclick="onClosed()">퇴장하기</button>
+
+        </div>
+      </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
+    <script>
+      const sock = new SockJS('[[@{/chat}]]');  //웹소켓 서버와 연결됨
+      sock.onmessage = onMessage;               // 웹소켓에서 해당 클라이언트 측으로 메시지를 보내면 자동으로 실행할 함수 정의
+      sock.onclose = onClosed;                   //웹소켓과 연결이 끊겨졌을때 자동으로 실행할 함수 정의
+
+      const $chatArea = document.querySelector('.chat-area'); // 메시지를 출력시킬 영역의 요소
+
+      // 메시지 전송시 실행되는 함수
+      function sendMassage() {
+        const $messageInput = document.getElementById('message'); //textarea 요소
+        sock.send($messageInput.value); //웹소켓으로 메시지 전달 (ChatEchoHandler의 handleMessage 메서드 실행됨
+        $messageInput.value = '';
+      }
+      // 나에게 메시지가 왔을 때 실행되는 함수(웹소켓->나)
+      function onMessage(evt) {
+        let msgArr = evt.data.split("|"); //["메시지유형, "출력시킬메시지내용",["발신자아이디"]
+
+        //채팅 영역에 출력시킬 요소 작업
+        let $div = document.createElement('div');
+        if(msgArr[0] === 'chat') { //채팅메시지
+          $div.className = 'chat-message';
+
+          // <div class='send-message'>메시지</div>>
+          let $messageDiv = document.createElement('div');
+          $messageDiv.className = 'send-message';
+          $messageDiv.textContent = msgArr[1];
+
+          // <span class='send-user'>발신자아이디</span>
+          let $userSpan = document.createElement('span');
+          $userSpan.className = 'send-user';
+          $userSpan.textContent = msgArr[2];
+
+          if(msgArr[2] === `[[${session.loginUser.userId}]]`) { //내가보낸 메시지
+            $div.classList.add('mine');
+          }else {
+            $div.classList.add('other');
+            $div.append($userSpan);
+          }
+          $div.append($messageDiv);
+        }else { //시스템메시지
+          $div.className = 'chat-user ' + msgArr[0];
+          $div.textContent = msgArr[1];
+        }
+        $chatArea.append($div);
+        $chatArea.scrollTop = $chatArea.scrollHeight;
+      }
+      // 채팅방에 나갈 경우 실행되는 함수
+      function onClosed() {
+        location.href = '[[@{/}]]';
+      }
+      //enter키 동작
+      document.getElementById('message').addEventListener('keydown', (evt) => {
+        if(evt.key === 'Enter') {
+          if(!evt.shiftKey) {
+            evt.preventDefault(); //textarea의 기본이벤트 방지
+            sendMassage();        //메시지 전송
+          }
+        }
+      });
+    </script>
+
+  </section>
+  <!-- Section end -->
+
+  <!-- Footer start -->
+  <th:block th:replace="~{fragment::footer}"></th:block>
+  <!-- Footer end -->
+
+</div>
+
+
+</body>
+</html>

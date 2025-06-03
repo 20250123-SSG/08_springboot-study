@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+  <div class="container p-3">
+
+    <!--header-nav-->
+    <th:block th:replace="~{fragment::header-nav}"></th:block>
+
+    <!-- Section start -->
+    <section class="row m-3" style="min-height: 500px">
+
+      <div class="container border p-5 m-4 rounded">
+
+        <h2 class="m-4">WebSocket을 이용하여 실시간으로 통신하기</h2>
+
+        <p>
+          실시간 알람서비스, 실시간 채팅 등(실시간 데이터 전송이 필요한)에 있어서 WebSocket 사용 <br>
+
+          * HTTP 통신(기본통신방식) : 비연결 통신 <br>
+          - 한번 요청 보내고 응답이 되면 연결끊김 == 지속적으로 데이터를 주고받기 x <br>
+          - 지속적으로 데이터를 주고받고자 할 경우 주기적으로 요청을 보내고 응답받기 (polling)
+            => 단, 네트워크 리소스를 많이 사용해서 비효율적
+
+          * WebSocket 통신 : 영구적 양방향 통신 <br>
+          - 실시간으로 연결되어있음 == 지속적으로 데이터를 주고받기 o
+        </p>
+
+        <a th:href="@{/chat/room.page}"
+           class="btn btn-secondary"
+           th:if="${session.loginUser != null}">채팅방 입장</a>
+
+      </div>
+
+    </section>
+    <!-- Section end -->
+
+    <!--footer-->
+    <th:block th:replace="~{fragment::footer}"></th:block>
+
+  </div>
+
+</body>
+</html>

@@ -16,7 +16,23 @@
 
     <div class="container border p-5 m-4 rounded">
 
-      <h2 class="m-4">해당 페이지의 내용이 보여져야되는 자리</h2>
+      <h2 class="m-4">WebSocket을 이용하여 실시간으로 통신하기</h2>
+
+      <p>
+        실시간 알람서비스, 실시간 채팅 등(실시간 데이터 전송이 필요한)에 있어서 WebSocket 사용 <br>
+
+        * HTTP 통신(기본통신방식) : 비연결 통신 <br>
+        - 한 번 요청 보내고 응답이 되면 연결끊김 == 지속적으로 데이터를 주고받기 x <br>
+        - 지속적으로 데이터를 주고받고자 할 경우 주기적으로 요청을 보내고 응답받기 (polling)
+            => 단, 네트워크 리소스를 많이 사용해서 비효율적
+
+        * WebSocket 통신 : 영구적 양방향 통신 <br>
+          - 실시간으로 연결되어있음 == 지속적으로 데이터를 주고받을 수 있음 <br>
+      </p>
+
+      <a class="btn btn-secondary"
+         th:if="${session.loginUser != null}"
+         th:href="@{/chat/room.page}">채팅방 입장</a>
 
     </div>
 
@@ -30,20 +46,3 @@
 </div>
 </body>
 </html>
-
-<form th:action="@{/user/signin.do}" method="POST">
-  <!-- Modal Body -->
-  <div class="modal-body">
-    <label for="userId" class="mr-sm-2">ID :</label>
-    <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Enter ID" id="userId" name="userId" /> <br>
-    <label for="userPwd" class="mr-sm-2">Password:</label>
-    <input type="password" class="form-control mb-2 mr-sm-2" placeholder="Enter password" id="userPwd" name="userPwd" />
-  </div>
-
-  <!-- Modal footer -->
-  <div class="modal-footer">
-    <button type="submit" class="btn btn-primary">로그인</button>
-    <button type="button" class="btn btn-danger" data-dismiss="modal">취소</button>
-  </div>
-</form>
-

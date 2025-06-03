@@ -65,5 +65,11 @@
   </th:block>
   </tbody>
 </table>
+<th:block th:each="user:${userlist}" th:object="${user}">
+  <div th:text="*{no}"></div>
+  <div th:text="*{name}"></div>
+  <div th:text="*{age}"></div>
+  <div th:text="*{registDate}"></div>
+</th:block>
 </body>
 </html>

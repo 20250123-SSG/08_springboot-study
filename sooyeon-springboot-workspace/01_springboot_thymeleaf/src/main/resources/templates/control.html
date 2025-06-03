@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <h2>타임리프 제어문 활용</h2>
+
+  <!--if, else문-->
+  <div>
+    <span th:if="${score} >= 60">통과</span>
+    <span th:unless="${score} >= 60">미통과</span>
+  </div>
+
+  <div>
+    <span th:if="${score >= 90}">A</span>
+    <span th:if="${score} >= 80 and ${score}">B</span>
+    <span th:if="${score} >= 70 and ${score}">C</span>
+    <span th:unless="${score} >= 70">F</span>
+  </div>
+
+  <div th:switch="${grade}">
+    <span th:case="A">훌륭</span>
+    <span th:case="B">잘</span>
+    <span th:case="C">노력</span>
+    <span th:case="*">분발</span>
+  </div>
+
+  <hr>
+
+  <!--1~5의 값들을 각각 span요소로 만들기-->
+  <th:block th:each="num:${#numbers.sequence(1,5)}">
+    <span th:text="${num}"></span> <br>
+  </th:block>
+
+  <span th:each="num:${#numbers.sequence(1,5)}"
+        th:text="${num}"></span>
+
+
+  <table border="1">
+    <thead>
+    <tr>
+      <th>번호</th>
+      <th>이름</th>
+      <th>나이</th>
+      <th>등록일</th>
+    </tr>
+    </thead>
+    <tbody>
+      <!--회원이 없을경우-->
+      <tr th:if="${#lists.isEmpty(userList)}">
+        <td colspan="4">등록된 회원이 없습니다.</td>
+      </tr>
+
+      <!--회원이 있을경우-->
+<!--      <th:block th:unless="${#lists.isEmpty(userList)}">-->
+<!--        <tr th:each="user:${userList}">-->
+<!--          <td th:text="${user.no}"></td>-->
+<!--          <td th:text="${user.name}"></td>-->
+<!--          <td th:text="${user.age}"></td>-->
+<!--          <td th:text="${user.registerDate}"></td>-->
+<!--        </tr>-->
+<!--      </th:block>-->
+
+      <th:block th:unless="${#lists.isEmpty(userList)}">
+        <tr th:each="user:${userList}" th:object="${user}">
+          <td th:text="*{no}"></td>
+          <td th:text="*{name}"></td>
+          <td th:text="*{age}"></td>
+          <td th:text="*{#temporals.format(registerDate, 'yy.MM.dd')}"></td>
+        </tr>
+      </th:block>
+
+
+
+
+    </tbody>
+  </table>
+
+</body>
+</html>

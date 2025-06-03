@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<h2>main page</h2>
+<h3>board list</h3>
+<table id="board_list" border="1">
+  <thead>
+  <tr>
+    <td>번호</td>
+    <td>제목</td>
+    <td>작성일시</td>
+  </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+<div id="paging_area"></div>
+<hr>
+
+<script>
+  function getBoardsAndPaging(page){
+    fetch('/board/list?page=' + page)
+      .then(response => {
+        if(response.ok){
+          console.log("comm success");
+        }else{
+          throw new Error("comm failed");
+        }
+        return response.json()
+      })
+      .then(data => {
+        console.log(data);
+
+        // 게시글 목록 화면 출력
+        let trEl = '';
+        data.list.forEach(b => {
+          trEl += `<tr>
+                    <td>${b.boardId}</td>
+                    <td>${b.title}</td>
+                    <td>${b.createDt}</td>
+                  </tr>`;
+        })
+        document.querySelector('#board_list tbody').innerHTML = trEl;
+
+        // 페이징바 화면 출력
+        let buttonEl = `<button onclick="getBoardsAndPaging(${data.page-1});" ${data.page == 1 ? 'disabled' : ''}><</button>`
+        for(let p=data.beginPage; p<=data.endPage; p++){
+          buttonEl += `<button onclick="getBoardsAndPaging(${p})">${p}</button>`;
+        }
+        buttonEl += `<button onclick="getBoardsAndPaging(${data.page+1});" ${data.page == data.totalPage ? 'disabled' : ''}>></button>`
+
+        document.querySelector('#paging_area').innerHTML = buttonEl;
+
+      })
+      .catch(e => {
+        console.log(e.message);
+      })
+  }
+  getBoardsAndPaging(1);
+</script>
+
+<h3>detail board</h3>
+boardId: <input type="text" id="boardId_input">
+<button id="search_btn">search</button>
+<div id="board_result"></div>
+<script>
+  document.getElementById('search_btn').addEventListener('click', evt => {
+    const $input = document.getElementById('boardId_input');
+
+    fetch('board/detail?no=' + $input.value)
+      .then( response => response.json())
+      .then( data => {
+        let tableEl = `<table border="1">
+                        <tbody>
+                          <tr>
+                            <td>${data.boardId}</td>
+                            <td>${data.title}</td>
+                            <td>${data.content}</td>
+                            <td>${data.createDt}</td>
+                          </tr>
+                        </tbody>
+                       </table>`;
+        document.getElementById('board_result').innerHTML = tableEl;
+      })
+
+  })
+</script>
+<hr>
+<h3>regist board</h3>
+<form id="regist_form">
+  title: <input type="text" name="title"><br>
+  title: <textarea name="content"></textarea><br>
+  <button type="button" id="regist_btn">regist</button>
+</form>
+<script>
+  document.getElementById('regist_btn').addEventListener('click', evt => {
+
+    // transfer data, FormData 형식으로 만들어서 전송(POST 방식)
+    // const formData = new FormData()
+    // formData.append('title', document.querySelector('#regist_form title').value)
+    // formData.append('content', document.querySelector('#regist_form content').value)
+    // (title=xxx&content=xxx)
+    const reqData = new FormData( document.getElementById('regist_form'));
+    fetch('/board/regist', {
+      method: 'POST'
+      , body: reqData // json 전송시 헤더 명시 필요
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        alert(data.message);
+      })
+  })
+</script>
+</body>
+</html>
