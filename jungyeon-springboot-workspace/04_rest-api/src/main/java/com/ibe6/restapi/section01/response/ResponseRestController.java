@@ -1,5 +1,6 @@
 package com.ibe6.restapi.section01.response;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,8 @@ import java.util.Map;
     2. 클래스 레벨에 작성, 해당 클래스 내의 모든 핸들러메소드에 @ResponseBody가 묵시적으로 적용됨
 
  */
+
+@Hidden
 
 
 @RequestMapping("/response")

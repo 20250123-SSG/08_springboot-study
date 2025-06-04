@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h2>메인페이지</h2>
+
+    <!-- 로그인 전(인증)에 보여질 요소들 -->
+    <div sec:authorize="isAnonymous()">
+        <a th:href="@{/signup}">회원가입 페이지 이동</a>
+        <a th:href="@{/login}">로그인 페이지 이동</a>
+    </div>
+
+
+    <!--로그인 후(인증후)에 보여질 요소-->
+    <div sec:authorize="isAuthenticated()">
+<!--        <span sec:authentication="name"></span>님 환영합니다.-->
+        <span th:text="${#authentication.principal.displayName}"></span>님, 환영합니다. <br>
+        <a th:href="@{/logout}">로그아웃</a>
+    </div>
+
+    <!-- 인증후 + 관리자 권한일 때만 보여질 요소-->
+    <a th:href="@{/admin/main}" sec:authorize="hasAuthority('ADMIN')">관리자 메인페이지로 이동</a>
+
+    <!-- 인증후 + USER권한일때만 보여질 요소-->
+    <a th:href="@{/admin/main}" sec:authorize="hasAuthority('USER')">일반회원 메인페이지로 이동</a>
+
+</body>
+</html>

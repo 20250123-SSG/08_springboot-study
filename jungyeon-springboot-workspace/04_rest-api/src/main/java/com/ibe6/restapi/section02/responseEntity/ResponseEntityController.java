@@ -1,5 +1,6 @@
 package com.ibe6.restapi.section02.responseEntity;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.apache.catalina.User;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+@Hidden
 
 @RequestMapping("/entity")
 @RestController

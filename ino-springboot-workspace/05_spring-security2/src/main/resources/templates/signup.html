@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script th:inline="javascript">
+  const message = /*[[${message}]]*/ null;
+  if (message != null) {
+    alert(message);
+  }
+</script>
+<h1>signup page</h1>
+<form th:action="@{/signup}" method="post">
+  id: <input type="text" name="userId"><br>
+  pw: <input type="password" name="userPwd"><br>
+  name: <input type="text" name="userName"><br>
+  auth:
+  <select name="userRole">
+    <option value="USER">USER</option>
+    <option value="ADMIN">ADMIN</option>
+  </select>
+  <button type="submit">signup</button>
+</form>
+</body>
+</html>
