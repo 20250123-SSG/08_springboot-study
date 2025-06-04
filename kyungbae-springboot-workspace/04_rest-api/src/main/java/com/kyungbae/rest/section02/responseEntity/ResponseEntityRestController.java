@@ -1,5 +1,6 @@
 package com.kyungbae.rest.section02.responseEntity;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Hidden
 @RequestMapping("/entity")
 @RestController
 public class ResponseEntityRestController {
