@@ -43,6 +43,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .collect(Collectors.toList());
 
         return new LoginUser(foundedUser.getUserId(), foundedUser.getUserPwd(), authorityList, foundedUser.getUserName());
-
+        // User클래스가 이미 UserDetails 인터페이스로 구현된 클래스라고 함. 따라서 가능. 상속받아 필요한 것만 오버라이딩
     }
 }
