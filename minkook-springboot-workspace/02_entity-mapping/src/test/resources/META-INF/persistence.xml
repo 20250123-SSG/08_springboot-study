@@ -7,7 +7,7 @@
 
     <persistence-unit name="jpa_test">
 
-        <class>com.minkook.section01.Test1</class>
+        <class>com.minkook.section01.User</class>
 
         <properties>
             <!-- Database connection settings -->
