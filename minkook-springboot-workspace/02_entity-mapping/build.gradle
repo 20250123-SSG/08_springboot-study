@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.0'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.minkook'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
+    implementation 'mysql:mysql-connector-java:8.0.33'
+    // https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-core
+    implementation group: 'org.hibernate.orm', name: 'hibernate-core', version: '6.4.4.Final'
+    // https://mvnrepository.com/artifact/org.assertj/assertj-core
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.24.2'
+
+    // https://mvnrepository.com/artifact/org.projectlombok/lombok
+    implementation 'org.projectlombok:lombok:1.18.24'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
